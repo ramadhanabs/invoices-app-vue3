@@ -7,8 +7,13 @@
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
+    "ant-design-vue": "^3.2.5",
+    "pinia": "^2.0.14",
+    "uid": "^2.0.0",
+    "unplugin-vue-components": "^0.19.6",
     "vue": "^3.2.33",
-    "vuesax": "^3.12.2"
+    "vue-router": "^4.0.15"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.1",
