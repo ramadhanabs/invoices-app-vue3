@@ -1,11 +1,19 @@
 <template>
   <p class="label" v-if="label">{{ label }}</p>
-  <a-date-picker v-bind="$attrs" />
+  <a-date-picker
+    v-bind="$attrs"
+    :value="modelValue"
+    @change="$emit('update:modelValue', $event)"
+  />
 </template>
 <script>
 export default {
   props: {
-    label: String
+    label: String,
+    modelValue: {
+      type: Object,
+      default: () => {}
+    }
   }
 }
 </script>
