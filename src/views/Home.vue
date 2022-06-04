@@ -1,35 +1,42 @@
 <template>
   <div class="root">
-    <a-row justify="space-between" align="middle">
-      <div>
-        <p class="title">Invoices</p>
-        <p>There are 2 invoices</p>
+    <div v-if="invoiceStore.data.length > 0">
+      <a-row justify="space-between" align="middle">
+        <div>
+          <p class="title">Invoices</p>
+          <p>There are {{ invoiceStore.data.length }} invoices</p>
+        </div>
+        <div>
+          <Button type="primary" shape="round" @click="store.isOpen = true">
+            Add New
+          </Button>
+        </div>
+      </a-row>
+      <div style="margin-top: 48px; margin-bottom: 48px">
+        <ListItem v-for="item of invoiceList" :key="item.id" :data="item" />
       </div>
-      <div>
-        <Button type="primary" shape="round" @click="store.isOpen = true">
-          Add New
-        </Button>
-      </div>
-    </a-row>
-    <div style="margin-top: 48px; margin-bottom: 48px">
-      <ListItem v-for="item of invoiceList" :key="item.id" :data="item" />
     </div>
+    <Loading v-else label="Retrieving invoices..." />
   </div>
 </template>
 <script>
 import { PlusOutlined } from '@ant-design/icons-vue'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
+import { useInvoiceStore } from '@/stores/invoices.js'
 import Button from '@/components/Button/index.vue'
 import ListItem from '@/components/List/home.vue'
+import Loading from '@/components/Loading/index.vue'
 export default defineComponent({
   components: {
     PlusOutlined,
     Button,
-    ListItem
+    ListItem,
+    Loading
   },
   setup() {
     const store = useModalStore()
+    const invoiceStore = useInvoiceStore()
     const invoiceList = ref([
       {
         id: 'INV-001',
@@ -54,7 +61,15 @@ export default defineComponent({
       }
     ])
 
-    return { store, invoiceList }
+    const fetchData = () => {
+      invoiceStore.fetchData()
+    }
+
+    onMounted(() => {
+      fetchData()
+    })
+
+    return { store, invoiceList, invoiceStore }
   }
 })
 </script>
