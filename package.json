@@ -9,6 +9,8 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "ant-design-vue": "^3.2.5",
+    "dayjs": "^1.11.2",
+    "firebase": "^9.8.2",
     "pinia": "^2.0.14",
     "uid": "^2.0.0",
     "unplugin-vue-components": "^0.19.6",
