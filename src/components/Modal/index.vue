@@ -1,14 +1,5 @@
 <template>
   <div class="overlay">
-    <!-- <div class="outer-sidemodal">
-      <a-row justify="center" align="middle" style="height: 100%">
-        <a-button type="link">
-          <template #icon>
-            <DoubleLeftOutlined />
-          </template>
-        </a-button>
-      </a-row>
-    </div> -->
     <div class="sidemodal">
       <p class="title">Add new invoices</p>
 
@@ -21,21 +12,37 @@
         <p>Progress: {{ stepperText }} ({{ stepper }}/2)</p>
       </div>
 
-      <text-input label="Invoice ID" placeholder="Invoice ID" disabled />
+      <text-input
+        label="Invoice ID"
+        placeholder="Invoice ID"
+        v-model="invoiceId"
+        disabled
+      />
       <Transition name="slide-fade" mode="out-in">
         <a-row :gutter="24" v-if="stepper === 1">
           <!-- Form one -->
           <a-col :span="12" class="section--root">
             <p class="subtitle">Bill from:</p>
             <a-space direction="vertical" size="middle" style="width: 100%">
-              <text-input label="Name" placeholder="Name" />
-              <text-input label="Email" placeholder="Email" type="email" />
               <text-input
+                v-model="billFrom.name"
+                label="Name"
+                placeholder="Name"
+              />
+              <text-input
+                v-model="billFrom.email"
+                label="Email"
+                placeholder="Email"
+                type="email"
+              />
+              <text-input
+                v-model="billFrom.phone"
                 label="Phone Number"
                 type="number"
                 placeholder="Phone Number"
               />
               <text-input
+                v-model="billFrom.address"
                 label="Address"
                 placeholder="Address"
                 :rows="4"
@@ -49,14 +56,25 @@
           <a-col :span="12" class="section--root">
             <p class="subtitle">Bill to:</p>
             <a-space direction="vertical" size="middle" style="width: 100%">
-              <text-input label="Name" placeholder="Name" />
-              <text-input label="Email" placeholder="Email" type="email" />
               <text-input
+                v-model="billTo.name"
+                label="Name"
+                placeholder="Name"
+              />
+              <text-input
+                v-model="billTo.email"
+                label="Email"
+                placeholder="Email"
+                type="email"
+              />
+              <text-input
+                v-model="billTo.phone"
                 label="Phone Number"
                 type="number"
                 placeholder="Phone Number"
               />
               <text-input
+                v-model="billTo.address"
                 label="Address"
                 placeholder="Address"
                 :rows="4"
@@ -102,7 +120,7 @@
                 />
                 <text-input v-model="i.price" type="number" prefix="Rp." />
                 <text-input v-model="i.qty" type="number" placeholder="Qty" />
-                <div>Rp. {{ i.price * i.qty }}</div>
+                <div>Rp. {{ (i.total = i.price * i.qty) }}</div>
                 <a-button
                   shape="circle"
                   @click="deleteList(index)"
@@ -154,19 +172,23 @@
         </div>
         <div v-else>
           <Button @click="stepper--" style="margin-right: 8px">Previous</Button>
-          <Button>Submit</Button>
+          <Button @click="handleSubmit" :loading="loading">Submit</Button>
         </div>
       </a-row>
     </div>
   </div>
 </template>
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
 import TextInput from '@/components/Input/text.vue'
 import Button from '@/components/Button/index.vue'
 import DatePicker from '@/components/Input/datepicker.vue'
+import { uid } from 'uid'
+import dayjs from 'dayjs'
+import { message } from 'ant-design-vue'
 import { DoubleLeftOutlined, DeleteFilled } from '@ant-design/icons-vue'
+import db from '../../firebase/firebaseInit'
 
 export default defineComponent({
   name: 'SideModal',
@@ -180,6 +202,25 @@ export default defineComponent({
   setup() {
     const store = useModalStore()
     const stepper = ref(1)
+    const invoiceId = ref(null)
+    const loading = ref(false)
+
+    /* Biller Invoice Information */
+    const billFrom = ref({
+      name: '',
+      email: '',
+      phone: '',
+      address: ''
+    })
+
+    const billTo = ref({
+      name: '',
+      email: '',
+      phone: '',
+      address: ''
+    })
+
+    /* Detail Invoice Information */
     const invoiceDate = ref('')
     const dueDate = ref('')
     const discount = ref(0)
@@ -213,6 +254,44 @@ export default defineComponent({
       invoiceList.value.splice(index, 1)
     }
 
+    const countTotal = (currentIndex) => {
+      const { price, qty } = invoiceList.value[currentIndex]
+      console.log(price, qty)
+    }
+
+    const handleSubmit = async () => {
+      const payload = {
+        id: invoiceId.value,
+        billFrom: JSONParser(billFrom.value),
+        billTo: JSONParser(billTo.value),
+        itemList: JSONParser(invoiceList.value),
+        invoiceDate: dayjs(invoiceDate.value).format(),
+        dueDate: dayjs(dueDate.value).format(),
+        discount: discount.value,
+        status: 'pending'
+      }
+      loading.value = true
+      await postInvoice(payload)
+      loading.value = false
+    }
+
+    const postInvoice = async (payload) => {
+      const database = db.collection('invoices').doc()
+      await database
+        .set(payload)
+        .then(() => {
+          message.success('Success add new invoices')
+          store.isOpen = false
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+
+    const JSONParser = (val) => {
+      return JSON.parse(JSON.stringify(val))
+    }
+
     const stepperText = computed(() =>
       stepper.value === 1 ? 'Biller Information' : 'Billing Detail'
     )
@@ -223,18 +302,28 @@ export default defineComponent({
       return arrayOfPrice.reduce(reducer, 0)
     })
 
+    onMounted(() => {
+      invoiceId.value = `INV-${uid(4)}`
+    })
+
     return {
       store,
       stepper,
       incrementStep,
       stepperText,
+      invoiceId,
       invoiceDate,
       dueDate,
       invoiceList,
       addNewList,
       deleteList,
       discount,
-      totalPrice
+      totalPrice,
+      countTotal,
+      billFrom,
+      billTo,
+      handleSubmit,
+      loading
     }
   }
 })
