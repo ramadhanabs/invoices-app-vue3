@@ -6,7 +6,12 @@
     @input="$emit('update:modelValue', $event.target.value)"
     v-if="!textArea"
   />
-  <a-textarea v-bind="$attrs" v-else />
+  <a-textarea
+    v-bind="$attrs"
+    :value="modelValue"
+    @input="$emit('update:modelValue', $event.target.value)"
+    v-else
+  />
 </template>
 <script>
 export default {
