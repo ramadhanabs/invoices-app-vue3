@@ -13,7 +13,14 @@
         </div>
       </a-row>
       <div style="margin-top: 48px; margin-bottom: 48px">
-        <ListItem v-for="item of invoiceList" :key="item.id" :data="item" />
+        <ListItem
+          v-for="item of invoiceStore.data"
+          :key="item.id"
+          :data="item.preview"
+        />
+        <div v-if="invoiceStore.data.length === 0" style="text-align: center">
+          No invoice found
+        </div>
       </div>
     </div>
     <Loading v-else label="Retrieving invoices..." />
