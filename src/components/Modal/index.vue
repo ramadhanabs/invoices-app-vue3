@@ -181,6 +181,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
+import { useInvoiceStore } from '@/stores/invoices.js'
 import TextInput from '@/components/Input/text.vue'
 import Button from '@/components/Button/index.vue'
 import DatePicker from '@/components/Input/datepicker.vue'
@@ -201,6 +202,7 @@ export default defineComponent({
   },
   setup() {
     const store = useModalStore()
+    const invoiceStore = useInvoiceStore()
     const stepper = ref(1)
     const invoiceId = ref(null)
     const loading = ref(false)
@@ -268,7 +270,8 @@ export default defineComponent({
         invoiceDate: dayjs(invoiceDate.value).format(),
         dueDate: dayjs(dueDate.value).format(),
         discount: discount.value,
-        status: 'pending'
+        status: 'pending',
+        totalAmount: totalPrice.value
       }
       loading.value = true
       await postInvoice(payload)
@@ -281,6 +284,7 @@ export default defineComponent({
         .set(payload)
         .then(() => {
           message.success('Success add new invoices')
+          invoiceStore.fetchData()
           store.isOpen = false
         })
         .catch((err) => {
