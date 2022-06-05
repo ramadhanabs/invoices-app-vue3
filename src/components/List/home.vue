@@ -8,7 +8,7 @@
       <ExclamationCircleFilled style="margin-right: 8px" />{{ data.status }}
     </Badge>
     <div style="text-align: right">
-      <a-button shape="circle">
+      <a-button shape="circle" @click="handleRoute(data.id)">
         <template #icon>
           <ArrowRightOutlined />
         </template>
@@ -24,6 +24,7 @@ import {
   CloseCircleFilled,
   ArrowRightOutlined
 } from '@ant-design/icons-vue'
+import { useRouter, useRoute } from 'vue-router'
 import Badge from '@/components/Badge/index.vue'
 
 export default defineComponent({
@@ -38,6 +39,7 @@ export default defineComponent({
     Badge
   },
   setup(props) {
+    const router = useRouter()
     const statusChecker = (value) => {
       const obj = {
         pending: 'warning',
@@ -46,6 +48,10 @@ export default defineComponent({
       }
 
       return obj[value] || ''
+    }
+
+    const handleRoute = (id) => {
+      router.push(`/invoice/${id}`)
     }
 
     const formattedPrice = computed(() => {
@@ -59,7 +65,7 @@ export default defineComponent({
       return `Rp ${_value}`
     })
 
-    return { statusChecker, formattedPrice }
+    return { statusChecker, formattedPrice, handleRoute }
   }
 })
 </script>
