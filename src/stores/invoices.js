@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import db from '../firebase/firebaseInit'
+import dayjs from 'dayjs'
 
 export const useInvoiceStore = defineStore({
   id: 'invoices',
@@ -12,14 +13,14 @@ export const useInvoiceStore = defineStore({
       const snapshot = await getData.get()
       this.data = snapshot.docs.map((doc) => {
         const tempData = doc.data()
-        const { id, dueDate, billTo, status } = tempData
+        const { id, dueDate, billTo, status, totalAmount } = tempData
         return {
           ...tempData,
           preview: {
             id,
-            dueDate,
+            dueDate: dayjs(dueDate).format('MMMM D, YYYY'),
             status,
-            amount: 0,
+            amount: totalAmount,
             biller: billTo.name
           }
         }
