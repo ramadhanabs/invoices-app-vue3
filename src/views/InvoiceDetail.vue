@@ -17,7 +17,7 @@
           </div>
           <a-space size="middle">
             <Button>Edit</Button>
-            <Button type="error">Delete</Button>
+            <Button type="error" @click="handleDelete">Delete</Button>
             <Button
               type="success"
               @click="handleUpdatePaid"
@@ -162,6 +162,22 @@ export default defineComponent({
         .update({ status: 'paid' })
         .then(() => {
           message.success('Success mark as paid')
+          fetchData()
+        })
+        .catch((err) => {
+          message.error(err)
+        })
+    }
+
+    const handleDelete = async () => {
+      const { documentId } = invoiceData.value
+      await db
+        .collection('invoices')
+        .doc(documentId)
+        .delete()
+        .then(() => {
+          message.success('Success delete data')
+          handleRoute()
         })
         .catch((err) => {
           message.error(err)
@@ -187,7 +203,8 @@ export default defineComponent({
       dueDate,
       invoiceDate,
       formatPrice,
-      handleUpdatePaid
+      handleUpdatePaid,
+      handleDelete
     }
   }
 })
