@@ -5,10 +5,12 @@ import dayjs from 'dayjs'
 export const useInvoiceStore = defineStore({
   id: 'invoices',
   state: () => ({
-    data: []
+    data: [],
+    isLoading: false
   }),
   actions: {
     async fetchData() {
+      this.isLoading = true
       const getData = db.collection('invoices')
       const snapshot = await getData.get()
       this.data = snapshot.docs.map((doc) => {
@@ -25,6 +27,7 @@ export const useInvoiceStore = defineStore({
           }
         }
       })
+      this.isLoading = false
     }
   }
 })
