@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <div v-if="invoiceStore.data.length > 0">
+    <div v-if="!invoiceStore.isLoading">
       <a-row justify="space-between" align="middle">
         <div>
           <p class="title">Invoices</p>
@@ -18,7 +18,10 @@
           :key="item.id"
           :data="item.preview"
         />
-        <div v-if="invoiceStore.data.length === 0" style="text-align: center">
+        <div
+          v-if="invoiceStore.data.length === 0"
+          style="text-align: center; color: white"
+        >
           No invoice found
         </div>
       </div>
@@ -44,29 +47,6 @@ export default defineComponent({
   setup() {
     const store = useModalStore()
     const invoiceStore = useInvoiceStore()
-    const invoiceList = ref([
-      {
-        id: 'INV-001',
-        dueDate: 'Jul 1, 2021',
-        biller: 'Jean Sean',
-        amount: 200000,
-        status: 'pending'
-      },
-      {
-        id: 'INV-002',
-        dueDate: 'Jul 1, 2021',
-        biller: 'Anthony Jhon Banderas',
-        amount: 500000,
-        status: 'paid'
-      },
-      {
-        id: 'INV-003',
-        dueDate: 'Jul 1, 2021',
-        biller: 'Anthony Jhon',
-        amount: 500000,
-        status: 'overdue'
-      }
-    ])
 
     const fetchData = () => {
       invoiceStore.fetchData()
@@ -76,7 +56,7 @@ export default defineComponent({
       fetchData()
     })
 
-    return { store, invoiceList, invoiceStore }
+    return { store, invoiceStore }
   }
 })
 </script>
