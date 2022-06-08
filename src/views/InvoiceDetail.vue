@@ -1,20 +1,16 @@
 <template>
   <div class="root">
-    <a-row align="middle" style="margin-bottom: 24px">
-      <a-button shape="circle" @click="handleRoute">
-        <template #icon>
-          <ArrowLeftOutlined />
-        </template>
-      </a-button>
-      <p style="margin-left: 8px">Back to Dashboard</p>
-    </a-row>
     <div v-if="Object.keys(invoiceData).length !== 0">
       <div class="wrapper">
         <a-row justify="space-between" align="middle">
-          <div>
-            <p>Invoice Detail</p>
-            <p class="title">{{ invoiceData.id }}</p>
-          </div>
+          <a-row align="middle">
+            <a-button shape="circle" @click="handleRoute">
+              <template #icon>
+                <ArrowLeftOutlined />
+              </template>
+            </a-button>
+            <p style="margin-left: 8px">Back to Dashboard</p>
+          </a-row>
           <a-space size="middle">
             <Button>Edit</Button>
             <Button type="error" @click="handleDelete">Delete</Button>
@@ -28,6 +24,15 @@
         </a-row>
       </div>
       <div class="wrapper">
+        <a-row
+          justify="space-between"
+          align="middle"
+          style="margin-bottom: 24px"
+        >
+          <p class="title">Invoice #{{ invoiceData.id }}</p>
+          <Button @click="exportPDF">Export PDF</Button>
+        </a-row>
+        <hr />
         <a-row justify="space-between">
           <a-col :span="8">
             <p class="label">Bill To:</p>
@@ -48,8 +53,11 @@
               <p class="content">{{ invoiceDate }}</p>
             </div>
           </a-col>
-          <a-col :span="8">
-            <Badge :type="statusChecker(invoiceData.status)">
+          <a-col :span="8" style="text-align: right">
+            <Badge
+              :type="statusChecker(invoiceData.status)"
+              style="margin-bottom: 16px"
+            >
               <ExclamationCircleFilled style="margin-right: 8px" />
               {{ invoiceData.status }}
             </Badge>
@@ -102,6 +110,7 @@ import Button from '@/components/Button/index.vue'
 import db from '../firebase/firebaseInit'
 import dayjs from 'dayjs'
 import { message } from 'ant-design-vue'
+import { jsPDF } from 'jspdf'
 
 export default defineComponent({
   components: {
@@ -184,6 +193,22 @@ export default defineComponent({
         })
     }
 
+    const exportPDF = () => {
+      const doc = new jsPDF('p', 'pt', 'a4')
+
+      const width = doc.internal.pageSize.getWidth()
+      const height = doc.internal.pageSize.getHeight()
+
+      doc.setFont('Helvetica')
+      doc.setFontSize(10)
+      doc.setTextColor(255, 255, 255)
+
+      doc.setFillColor(39, 42, 71)
+      doc.rect(0, 0, width, 150, 'F')
+      doc.text('Hello world!', 10, 10)
+      window.open(doc.output('bloburl'), '_blank')
+    }
+
     const dueDate = computed(() =>
       dayjs(invoiceData.value.dueDate).format('MMMM D, YYYY')
     )
@@ -204,7 +229,8 @@ export default defineComponent({
       invoiceDate,
       formatPrice,
       handleUpdatePaid,
-      handleDelete
+      handleDelete,
+      exportPDF
     }
   }
 })
@@ -263,5 +289,11 @@ export default defineComponent({
 .total-price {
   font-size: 24px;
   font-weight: 600;
+}
+
+hr {
+  border: 1px solid #fafafa17;
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 </style>
