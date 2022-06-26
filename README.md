@@ -27,3 +27,9 @@ npm run dev
 ```sh
 npm run build
 ```
+
+## Next Improvement
+
+```sh
+Add profile page
+```
