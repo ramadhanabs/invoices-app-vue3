@@ -51,9 +51,9 @@ export default defineComponent({
     const invoiceStore = useInvoiceStore()
     const userStore = useUserStore()
 
-    const fetchData = () => {
-      invoiceStore.fetchData()
-      userStore.getUser()
+    const fetchData = async () => {
+      await userStore.getUser()
+      invoiceStore.fetchData(userStore.id)
     }
 
     onMounted(() => {
