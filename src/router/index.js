@@ -1,8 +1,10 @@
 import { createWebHistory, createRouter } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import Home from '@/views/Home.vue'
 import Analytics from '@/views/Analytics.vue'
 import InvoiceDetail from '@/views/InvoiceDetail.vue'
 import Register from '@/views/Register.vue'
+import Login from '@/views/Login.vue'
 
 const routes = [
   {
@@ -10,7 +12,8 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      layout: 'dashboard-layout'
+      layout: 'dashboard-layout',
+      requiresAuth: true
     }
   },
   {
@@ -22,11 +25,20 @@ const routes = [
     }
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: {
+      layout: 'auth-layout'
+    }
+  },
+  {
     path: '/analytics',
     name: 'Analytics',
     component: Analytics,
     meta: {
-      layout: 'dashboard-layout'
+      layout: 'dashboard-layout',
+      requiresAuth: true
     }
   },
   {
@@ -34,7 +46,8 @@ const routes = [
     name: 'Invoice',
     component: InvoiceDetail,
     meta: {
-      layout: 'dashboard-layout'
+      layout: 'dashboard-layout',
+      requiresAuth: true
     }
   }
 ]
@@ -42,6 +55,32 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const removeListener = onAuthStateChanged(
+      getAuth(),
+      (user) => {
+        removeListener()
+        resolve(user)
+      },
+      reject
+    )
+  })
+}
+
+router.beforeEach(async (to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    const currentUser = await getCurrentUser()
+    if (currentUser) {
+      next()
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
