@@ -1,23 +1,28 @@
 <template>
-  <Navbar />
-  <div id="root">
+  <component :is="layout">
     <router-view />
-  </div>
-  <Transition name="slide-fade">
-    <SideModal v-if="store.isOpen" />
-  </Transition>
+  </component>
 </template>
 <script>
-import Navbar from '@/components/Navbar/index.vue'
-import SideModal from '@/components/Modal/index.vue'
-import { defineComponent, ref } from 'vue'
+import DashboardLayout from '@/layout/dashboard.vue'
+import AuthLayout from '@/layout/auth.vue'
+import { defineComponent, ref, watch, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
-export default defineComponent({
-  components: { Navbar, SideModal },
-  setup() {
-    const store = useModalStore()
+import { useRoute } from 'vue-router'
 
-    return { store }
+export default defineComponent({
+  components: { DashboardLayout, AuthLayout },
+  setup() {
+    const route = useRoute()
+    const store = useModalStore()
+    const layout = ref(null)
+
+    watch(
+      () => route.name,
+      () => (layout.value = route.meta.layout)
+    )
+
+    return { store, layout }
   }
 })
 </script>
@@ -35,17 +40,6 @@ body {
 p {
   color: white;
   margin-bottom: 0px !important;
-}
-
-#root {
-  display: flex;
-  justify-content: center;
-  padding: 48px;
-  height: 100%;
-}
-
-#app {
-  height: 100%;
 }
 
 .slide-fade-enter-active {
@@ -77,5 +71,66 @@ input[type='number']::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield;
+}
+
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+@media (min-width: 476px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 476px) {
+  .container {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    width: 720px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 960px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1140px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    width: 1340px;
+    max-width: 100%;
+  }
 }
 </style>
