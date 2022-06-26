@@ -25,6 +25,9 @@ import {
 import { defineComponent, ref } from 'vue'
 import { getAuth, signOut } from 'firebase/auth'
 import { useRouter } from 'vue-router'
+import { useModalStore } from '@/stores/modal.js'
+import { useInvoiceStore } from '@/stores/invoices.js'
+import { useUserStore } from '@/stores/user.js'
 
 export default defineComponent({
   components: {
@@ -35,6 +38,10 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter()
+    const store = useModalStore()
+    const invoiceStore = useInvoiceStore()
+    const userStore = useUserStore()
+
     const menu = ref([
       {
         route: '/',
@@ -54,6 +61,11 @@ export default defineComponent({
       const auth = getAuth()
       signOut(auth).then(() => {
         router.push('/login')
+
+        /* Reset all store */
+        store.$reset()
+        invoiceStore.$reset()
+        userStore.$reset()
       })
     }
 
