@@ -87,7 +87,7 @@
         <div v-else-if="stepper === 2">
           <div class="section--root">
             <p class="subtitle">List item:</p>
-            <div class="grid--root">
+            <div class="grid--root" style="padding: 8px 16px">
               <p class="label">Item Name</p>
               <p class="label">Price</p>
               <p class="label">Qty</p>
@@ -118,7 +118,10 @@
                   placeholder="Name"
                   style="margin-bottom: 0px"
                 />
-                <text-input v-model="i.price" type="number" prefix="Rp." />
+                <currency-input
+                  v-model="i.price"
+                  :options="currencyFieldOptions"
+                />
                 <text-input v-model="i.qty" type="number" placeholder="Qty" />
                 <div>Rp. {{ (i.total = i.price * i.qty) }}</div>
                 <a-button
@@ -183,6 +186,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
 import { useInvoiceStore } from '@/stores/invoices.js'
 import TextInput from '@/components/Input/text.vue'
+import CurrencyInput from '@/components/Input/currency-input.vue'
 import Button from '@/components/Button/index.vue'
 import DatePicker from '@/components/Input/datepicker.vue'
 import { uid } from 'uid'
@@ -195,6 +199,7 @@ export default defineComponent({
   name: 'SideModal',
   components: {
     TextInput,
+    CurrencyInput,
     Button,
     DatePicker,
     DoubleLeftOutlined,
@@ -203,6 +208,11 @@ export default defineComponent({
   setup() {
     const store = useModalStore()
     const invoiceStore = useInvoiceStore()
+    const currencyFieldOptions = {
+      currency: 'USD',
+      currencyDisplay: 'hidden',
+      hideCurrencySymbolOnFocus: true
+    }
     const stepper = ref(1)
     const invoiceId = ref(null)
     const loading = ref(false)
@@ -327,7 +337,8 @@ export default defineComponent({
       billFrom,
       billTo,
       handleSubmit,
-      loading
+      loading,
+      currencyFieldOptions
     }
   }
 })

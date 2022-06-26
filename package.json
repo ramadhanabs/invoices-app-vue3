@@ -9,6 +9,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "ant-design-vue": "^3.2.5",
+    "currency.js": "^2.0.4",
     "dayjs": "^1.11.2",
     "firebase": "^9.8.2",
     "jspdf": "^2.5.1",
@@ -16,6 +17,7 @@
     "uid": "^2.0.0",
     "unplugin-vue-components": "^0.19.6",
     "vue": "^3.2.33",
+    "vue-currency-input": "^2.4.0",
     "vue-router": "^4.0.15"
   },
   "devDependencies": {

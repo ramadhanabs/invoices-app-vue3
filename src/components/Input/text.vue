@@ -14,7 +14,10 @@
   />
 </template>
 <script>
-export default {
+import { defineComponent } from 'vue'
+import { useCurrencyInput } from 'vue-currency-input'
+
+export default defineComponent({
   props: {
     label: String,
     textArea: {
@@ -26,7 +29,7 @@ export default {
       default: ''
     }
   }
-}
+})
 </script>
 <style scoped>
 .ant-input {
