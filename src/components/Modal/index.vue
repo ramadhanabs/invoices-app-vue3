@@ -17,6 +17,13 @@
         placeholder="Invoice ID"
         v-model="invoiceId"
         disabled
+        style="margin-bottom: 16px"
+      />
+      <text-input
+        label="User ID"
+        placeholder="User ID"
+        v-model="userId"
+        disabled
       />
       <Transition name="slide-fade" mode="out-in">
         <a-row :gutter="24" v-if="stepper === 1">
@@ -185,6 +192,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
 import { useInvoiceStore } from '@/stores/invoices.js'
+import { useUserStore } from '@/stores/user.js'
 import TextInput from '@/components/Input/text.vue'
 import CurrencyInput from '@/components/Input/currency-input.vue'
 import Button from '@/components/Button/index.vue'
@@ -208,6 +216,8 @@ export default defineComponent({
   setup() {
     const store = useModalStore()
     const invoiceStore = useInvoiceStore()
+    const userStore = useUserStore()
+
     const currencyFieldOptions = {
       currency: 'USD',
       currencyDisplay: 'hidden',
@@ -215,6 +225,7 @@ export default defineComponent({
     }
     const stepper = ref(1)
     const invoiceId = ref(null)
+    const userId = ref(null)
     const loading = ref(false)
 
     /* Biller Invoice Information */
@@ -274,6 +285,7 @@ export default defineComponent({
     const handleSubmit = async () => {
       const payload = {
         id: invoiceId.value,
+        userId: userStore.id,
         billFrom: JSONParser(billFrom.value),
         billTo: JSONParser(billTo.value),
         itemList: JSONParser(invoiceList.value),
@@ -294,7 +306,7 @@ export default defineComponent({
         .set(payload)
         .then(() => {
           message.success('Success add new invoices')
-          invoiceStore.fetchData()
+          invoiceStore.fetchData(userStore.id)
           store.isOpen = false
         })
         .catch((err) => {
@@ -318,6 +330,7 @@ export default defineComponent({
 
     onMounted(() => {
       invoiceId.value = `INV-${uid(4)}`
+      userId.value = userStore.id
     })
 
     return {
@@ -326,6 +339,7 @@ export default defineComponent({
       incrementStep,
       stepperText,
       invoiceId,
+      userId,
       invoiceDate,
       dueDate,
       invoiceList,
