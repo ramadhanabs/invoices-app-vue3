@@ -9,15 +9,26 @@
       >
         <component v-bind:is="item.icon" />
       </router-link>
+      <a type="button" @click="handleSignOut" icon style="margin-top: auto">
+        <LogoutOutlined />
+      </a>
     </div>
   </div>
 </template>
 <script>
-import { DollarCircleFilled, SlidersFilled } from '@ant-design/icons-vue'
+import {
+  DollarCircleFilled,
+  SlidersFilled,
+  LogoutOutlined
+} from '@ant-design/icons-vue'
 import { defineComponent, ref } from 'vue'
+import { getAuth, signOut } from 'firebase/auth'
+import { useRouter } from 'vue-router'
+
 export default defineComponent({
-  components: { DollarCircleFilled, SlidersFilled },
+  components: { DollarCircleFilled, SlidersFilled, LogoutOutlined },
   setup() {
+    const router = useRouter()
     const menu = ref([
       {
         route: '/',
@@ -29,7 +40,15 @@ export default defineComponent({
       }
     ])
 
+    const handleSignOut = () => {
+      const auth = getAuth()
+      signOut(auth).then(() => {
+        router.push('/login')
+      })
+    }
+
     return {
+      handleSignOut,
       menu
     }
   }
@@ -49,7 +68,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: auto;
+  height: 100%;
 }
 .sidenav a {
   color: white;
