@@ -1,6 +1,7 @@
 <template>
   <div class="root">
     <div v-if="!invoiceStore.isLoading">
+      <p>Hello, {{ userStore.name || userStore.email }}</p>
       <a-row justify="space-between" align="middle">
         <div>
           <p class="title">Invoices</p>
@@ -31,9 +32,10 @@
 </template>
 <script>
 import { PlusOutlined } from '@ant-design/icons-vue'
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useModalStore } from '@/stores/modal.js'
 import { useInvoiceStore } from '@/stores/invoices.js'
+import { useUserStore } from '@/stores/user.js'
 import Button from '@/components/Button/index.vue'
 import ListItem from '@/components/List/home.vue'
 import Loading from '@/components/Loading/index.vue'
@@ -47,16 +49,18 @@ export default defineComponent({
   setup() {
     const store = useModalStore()
     const invoiceStore = useInvoiceStore()
+    const userStore = useUserStore()
 
     const fetchData = () => {
       invoiceStore.fetchData()
+      userStore.getUser()
     }
 
     onMounted(() => {
       fetchData()
     })
 
-    return { store, invoiceStore }
+    return { store, invoiceStore, userStore }
   }
 })
 </script>
