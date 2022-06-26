@@ -38,7 +38,7 @@
           <a-divider
             style="background-color: white; opacity: 0.3; margin: 16px 0px"
           />
-          <a-button block>
+          <a-button block @click="handleGoogleAuth">
             <template #icon>
               <GoogleCircleFilled />
             </template>
@@ -47,7 +47,7 @@
 
           <div style="margin-top: 24px; text-align: center">
             <p class="subtitle">Already have account?</p>
-            <a class="subtitle">Login here</a>
+            <a class="subtitle" @click="$router.push('/login')">Login here</a>
           </div>
         </div>
       </a-col>
@@ -59,27 +59,58 @@ import { defineComponent, ref } from 'vue'
 import TextInput from '@/components/Input/text.vue'
 import Button from '@/components/Button/index.vue'
 import { GoogleCircleFilled } from '@ant-design/icons-vue'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth'
+import { message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   components: { TextInput, Button, GoogleCircleFilled },
   setup() {
+    const router = useRouter()
+    const loading = ref(false)
     const input = ref({
       email: '',
       password: ''
     })
 
     const handleRegister = async () => {
-      const res = await createUserWithEmailAndPassword(
-        getAuth(),
-        input.value.email,
-        input.value.password
-      )
-      console.log(res)
+      try {
+        loading.value = true
+        const res = await createUserWithEmailAndPassword(
+          getAuth(),
+          input.value.email,
+          input.value.password
+        )
+        if (res) {
+          message.success('Success Register')
+        }
+      } catch (err) {
+        message.error(err)
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const handleGoogleAuth = () => {
+      const provider = new GoogleAuthProvider()
+      signInWithPopup(getAuth(), provider)
+        .then((result) => {
+          message.success('Success Login')
+          router.push('/')
+        })
+        .catch((error) => {
+          message.error(error.code)
+        })
     }
     return {
       input,
-      handleRegister
+      handleRegister,
+      handleGoogleAuth
     }
   }
 })
