@@ -9,3 +9,4 @@ This invoices app already integrated with Firestore Database and Firebase Auth. 
 - Improve modal section
 - Add name field in register
 - Improve formatting in currency text (Modal Form)
+- Get Yolo Badge
