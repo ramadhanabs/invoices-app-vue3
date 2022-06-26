@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import Home from '@/views/Home.vue'
 import Analytics from '@/views/Analytics.vue'
+import Settings from '@/views/Settings.vue'
 import InvoiceDetail from '@/views/InvoiceDetail.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
@@ -36,6 +37,15 @@ const routes = [
     path: '/analytics',
     name: 'Analytics',
     component: Analytics,
+    meta: {
+      layout: 'dashboard-layout',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
     meta: {
       layout: 'dashboard-layout',
       requiresAuth: true

@@ -19,14 +19,20 @@
 import {
   DollarCircleFilled,
   SlidersFilled,
-  LogoutOutlined
+  LogoutOutlined,
+  SettingFilled
 } from '@ant-design/icons-vue'
 import { defineComponent, ref } from 'vue'
 import { getAuth, signOut } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  components: { DollarCircleFilled, SlidersFilled, LogoutOutlined },
+  components: {
+    DollarCircleFilled,
+    SlidersFilled,
+    LogoutOutlined,
+    SettingFilled
+  },
   setup() {
     const router = useRouter()
     const menu = ref([
@@ -37,6 +43,10 @@ export default defineComponent({
       {
         route: '/analytics',
         icon: 'sliders-filled'
+      },
+      {
+        route: '/settings',
+        icon: 'setting-filled'
       }
     ])
 
