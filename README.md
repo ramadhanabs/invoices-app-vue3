@@ -4,9 +4,9 @@ This invoices app already integrated with Firestore Database and Firebase Auth. 
 
 ## Next Improvement
 
-- Add profile page
-- Improve export pdf
-- Improve modal section
-- Add name field in register
-- Improve formatting in currency text (Modal Form)
-- Get Yolo Badge
+- Add profile page :repeat:
+- Improve export pdf :muscle:
+- Improve modal section :muscle:
+- Add name field in register :white_check_mark:
+- Improve formatting in currency text (Modal Form) :muscle:
+- Get Yolo Badge :white_check_mark:
