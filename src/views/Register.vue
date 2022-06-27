@@ -12,6 +12,12 @@
         <div class="card">
           <p class="title">Sign up here.</p>
           <text-input
+            label="Name"
+            placeholder="Input your Name"
+            v-model="input.name"
+            style="margin-bottom: 16px"
+          />
+          <text-input
             label="Email"
             placeholder="Input your email"
             v-model="input.email"
@@ -31,6 +37,7 @@
             shape="round"
             style="margin-top: 16px"
             @click="handleRegister"
+            :loading="loading"
           >
             Sign Up
           </Button>
@@ -63,7 +70,8 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile
 } from 'firebase/auth'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
@@ -74,6 +82,7 @@ export default defineComponent({
     const router = useRouter()
     const loading = ref(false)
     const input = ref({
+      name: '',
       email: '',
       password: ''
     })
@@ -81,14 +90,15 @@ export default defineComponent({
     const handleRegister = async () => {
       try {
         loading.value = true
-        const res = await createUserWithEmailAndPassword(
+        await createUserWithEmailAndPassword(
           getAuth(),
           input.value.email,
           input.value.password
-        )
-        if (res) {
+        ).then(({ user }) => {
+          updateProfile(user, { displayName: input.value.name })
           message.success('Success Register')
-        }
+          router.push('/')
+        })
       } catch (err) {
         message.error(err)
       } finally {
@@ -108,6 +118,7 @@ export default defineComponent({
         })
     }
     return {
+      loading,
       input,
       handleRegister,
       handleGoogleAuth
