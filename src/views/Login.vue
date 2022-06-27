@@ -39,7 +39,7 @@
           <a-divider
             style="background-color: white; opacity: 0.3; margin: 16px 0px"
           />
-          <a-button block>
+          <a-button block @click="handleGoogleAuth">
             <template #icon>
               <GoogleCircleFilled />
             </template>
@@ -63,7 +63,12 @@ import { useRouter } from 'vue-router'
 import TextInput from '@/components/Input/text.vue'
 import Button from '@/components/Button/index.vue'
 import { GoogleCircleFilled } from '@ant-design/icons-vue'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth'
 import { message } from 'ant-design-vue'
 
 export default defineComponent({
@@ -111,10 +116,23 @@ export default defineComponent({
       }
     }
 
+    const handleGoogleAuth = () => {
+      const provider = new GoogleAuthProvider()
+      signInWithPopup(getAuth(), provider)
+        .then((result) => {
+          message.success('Success Login')
+          router.push('/')
+        })
+        .catch((error) => {
+          message.error(error.code)
+        })
+    }
+
     return {
       loading,
       input,
-      handleLogin
+      handleLogin,
+      handleGoogleAuth
     }
   }
 })
