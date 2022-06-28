@@ -1,18 +1,36 @@
 <template>
   <div class="sidenav">
-    <div class="wrapper">
-      <router-link
-        v-for="item of menu"
-        :key="item.route"
-        :to="item.route"
-        active-class="active"
-      >
-        <component v-bind:is="item.icon" />
-      </router-link>
-      <a type="button" @click="handleSignOut" icon style="margin-top: auto">
-        <LogoutOutlined />
-      </a>
-    </div>
+    <a-badge-ribbon
+      :text="userStore.emailVerified ? 'Verified' : 'Unverified'"
+      :color="userStore.emailVerified ? 'blue' : 'red'"
+    >
+      <div class="wrapper">
+        <a
+          type="button"
+          @click="$router.push('/settings')"
+          style="margin-top: 50px"
+          icon
+        >
+          <a-avatar v-if="userStore.photoUrl" :src="userStore.photoUrl" />
+          <a-avatar v-else>
+            <template #icon>
+              <UserOutlined />
+            </template>
+          </a-avatar>
+        </a>
+        <router-link
+          v-for="item of menu"
+          :key="item.route"
+          :to="item.route"
+          active-class="active"
+        >
+          <component v-bind:is="item.icon" />
+        </router-link>
+        <a type="button" @click="handleSignOut" icon style="margin-top: auto">
+          <LogoutOutlined />
+        </a>
+      </div>
+    </a-badge-ribbon>
   </div>
 </template>
 <script>
@@ -20,7 +38,8 @@ import {
   DollarCircleFilled,
   SlidersFilled,
   LogoutOutlined,
-  SettingFilled
+  SettingFilled,
+  UserOutlined
 } from '@ant-design/icons-vue'
 import { defineComponent, ref } from 'vue'
 import { getAuth, signOut } from 'firebase/auth'
@@ -34,7 +53,8 @@ export default defineComponent({
     DollarCircleFilled,
     SlidersFilled,
     LogoutOutlined,
-    SettingFilled
+    SettingFilled,
+    UserOutlined
   },
   setup() {
     const router = useRouter()
@@ -71,7 +91,8 @@ export default defineComponent({
 
     return {
       handleSignOut,
-      menu
+      menu,
+      userStore
     }
   }
 })
@@ -115,5 +136,9 @@ export default defineComponent({
 .active {
   background-color: #393d5b;
   border-radius: 8px;
+}
+
+.ant-ribbon-wrapper {
+  height: 100%;
 }
 </style>
