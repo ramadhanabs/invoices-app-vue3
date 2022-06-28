@@ -6,16 +6,21 @@ export const useUserStore = defineStore({
   state: () => ({
     id: '',
     name: '',
-    email: ''
+    email: '',
+    photoUrl: '',
+    emailVerified: ''
   }),
   actions: {
     getUser() {
       const { currentUser } = getAuth()
-      const { uid, displayName, email } = currentUser
+      const { uid, displayName, email, photoURL, emailVerified } = currentUser
+      console.log(currentUser)
 
       this.id = uid
       this.name = displayName
       this.email = email
+      this.photoUrl = photoURL
+      this.emailVerified = emailVerified
     }
   }
 })
