@@ -75,6 +75,7 @@ import {
 } from 'firebase/auth'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
+import db from '../firebase/firebaseInit'
 
 export default defineComponent({
   components: { TextInput, Button, GoogleCircleFilled },
@@ -96,6 +97,12 @@ export default defineComponent({
           input.value.password
         ).then(({ user }) => {
           updateProfile(user, { displayName: input.value.name })
+          db.collection('users').doc(user.uid).set({
+            displayName: input.value.name,
+            email: user.email,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified
+          })
           message.success('Success Register')
           router.push('/')
         })
@@ -109,7 +116,13 @@ export default defineComponent({
     const handleGoogleAuth = () => {
       const provider = new GoogleAuthProvider()
       signInWithPopup(getAuth(), provider)
-        .then((result) => {
+        .then(({ user }) => {
+          db.collection('users').doc(user.uid).set({
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            emailVerified: user.emailVerified
+          })
           message.success('Success Login')
           router.push('/')
         })
