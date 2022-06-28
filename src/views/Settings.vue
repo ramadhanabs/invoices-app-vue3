@@ -4,12 +4,23 @@
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="1" tab="Profile" style="color: white">
         <a-row style="margin: 32px 0px">
-          <a-col :span="8">
-            <div class="round-wrapper">
+          <a-col
+            :span="8"
+            style="display: flex; flex-direction: column; padding: 0px 16px"
+          >
+            <div class="round-wrapper" style="margin: 0px auto">
+              <img
+                :src="imageFile.filePath"
+                alt="photo-profile"
+                class="image-preview"
+                v-if="imageFile.filePath"
+                referrerpolicy="no-referrer"
+              />
               <a-row
                 align="middle"
                 justify="center"
                 style="height: 100%; flex-direction: column"
+                v-else
               >
                 <a-button shape="circle" @click="handleClickInputFile">
                   <template #icon>
@@ -19,6 +30,13 @@
                 <p style="font-size: 12px; opacity: 0.6">Add photo profile</p>
               </a-row>
             </div>
+            <a-button
+              @click="handleClickInputFile"
+              style="margin-top: 24px"
+              v-if="imageFile.filePath"
+            >
+              Change Image
+            </a-button>
           </a-col>
           <a-col :span="16">
             <p class="subtitle">Detail profile</p>
@@ -48,6 +66,7 @@
       style="visibility: hidden"
       ref="inputFile"
       accept="image/*"
+      @change="handleFileChange"
     />
   </div>
 </template>
@@ -70,18 +89,46 @@ export default defineComponent({
       email: ''
     })
 
+    const imageFile = ref({
+      filePath: null,
+      fileName: '',
+      imgUrl: ''
+    })
+
     const handleClickInputFile = () => inputFile.value.click()
+
+    const handleFileChange = (val) => {
+      const [files] = val.target.files
+
+      imageFile.value.fileName = files.name
+      createBase64Image(files)
+    }
+
+    const createBase64Image = (file) => {
+      const reader = new FileReader()
+      imageFile.value.filePath = URL.createObjectURL(file)
+      reader.onload = (e) => {
+        imageFile.value.imgUrl = e.target.result
+      }
+      reader.readAsDataURL(file)
+    }
+
+    const resetImage = () => (imageFile.value.filePath = null)
 
     onMounted(() => {
       input.value.name = userStore.name
       input.value.email = userStore.email
+      imageFile.value.filePath = userStore.photoUrl
     })
 
     return {
       activeKey,
       inputFile,
       input,
-      handleClickInputFile
+      handleClickInputFile,
+      handleFileChange,
+      imageFile,
+      resetImage
     }
   }
 })
@@ -109,6 +156,7 @@ export default defineComponent({
   background-color: #3c3054;
   border-radius: 50%;
   display: inline-block;
+  overflow: hidden;
 }
 
 ::v-deep .ant-tabs-tab {
@@ -133,5 +181,12 @@ export default defineComponent({
 }
 .ant-btn:hover {
   background-color: #2a213c !important;
+}
+
+.image-preview {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  object-position: center;
 }
 </style>
