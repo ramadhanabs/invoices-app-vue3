@@ -6,6 +6,7 @@ import Settings from '@/views/Settings.vue'
 import InvoiceDetail from '@/views/InvoiceDetail.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
+import { useUserStore } from '@/stores/user.js'
 
 const routes = [
   {
@@ -81,10 +82,12 @@ const getCurrentUser = () => {
 }
 
 router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     const currentUser = await getCurrentUser()
     if (currentUser) {
       next()
+      userStore.getUser()
     } else {
       next('/login')
     }

@@ -14,8 +14,8 @@ export const useUserStore = defineStore({
     getUser() {
       const { currentUser } = getAuth()
       const { uid, displayName, email, photoURL, emailVerified } = currentUser
-      console.log(currentUser)
 
+      /* Needs improvement */
       this.id = uid
       this.name = displayName
       this.email = email
