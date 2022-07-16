@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 5050"
+    "preview": "vite preview --port 5050",
+    "test": "vitest --verbose",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
@@ -21,7 +23,9 @@
     "vue-router": "^4.0.15"
   },
   "devDependencies": {
+    "@testing-library/vue": "^6.6.0",
     "@vitejs/plugin-vue": "^2.3.1",
-    "vite": "^2.9.5"
+    "vite": "^2.9.5",
+    "vitest": "^0.18.0"
   }
 }
